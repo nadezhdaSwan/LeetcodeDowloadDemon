@@ -3,6 +3,10 @@ from task import Task
 from typing import List
 import random, time
 from urllib.request import Request, urlopen
+from selenium import webdriver
+from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 
 import logging
 logger = logging.getLogger(__name__)
@@ -10,6 +14,21 @@ logger = logging.getLogger(__name__)
 def wait_for_delay(delay: int):
 	logger.info(f"Waiting {delay} sec...")
 	time.sleep(delay)
+
+def assert_page_content(driver: webdriver.firefox.webdriver):
+	count = 20 # задержка
+	text = None
+	while count and text == None:
+		try:
+			text = driver.find_element(By.CLASS_NAME, "elfjS").text
+		except NoSuchElementException:
+			time.sleep(1)
+			count -= 1
+	if not count:
+		logger.warning(f"Don't have content")
+	return count # если осталось время задержки
+		
+
 
 
 class PageLoader:
@@ -31,13 +50,25 @@ class PageLoader:
 	def try_dowload_task_page(self, task:Task) -> bool:
 		logger.info(f'Downloading task from "{task.url}"')
 		if self.cache.is_cached(task.name):
-			print('Already in cache, skipping.')
+			logger.info('Already in cache, skipping.')
 			return False
 		else:
-			page = self.download_book_page_direct(task)
-			self.cache.save(task.name, page)
-			return True
+			page = self.download_book_selenium(task)
+			if page:
+				self.cache.save(task.name, page)
+				return True
+			else:
+				return False
 
+	def download_book_selenium(self, task:Task):
+		logger.info(f'Start direct download page from "{task.url}"')
+		driver = webdriver.Firefox()
+		driver.get(task.url)
+		content = False
+		if assert_page_content(driver):
+			content = driver.page_source
+		driver.close()
+		return content
 
 
 	def download_book_page_direct(self, task:Task):

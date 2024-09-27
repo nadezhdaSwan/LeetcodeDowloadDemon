@@ -19,7 +19,7 @@ class CacheManager:
 
 	def save(self, name: str, content: str):
 		file_name = self.get_path(name)
-		with open(file_name, 'wb') as file:
+		with open(file_name, 'w') as file:
 			logger.info(f'Save to cache: "{file_name}"')
 			file.write(content)
 
