@@ -20,10 +20,17 @@ def assert_page_content(driver: webdriver.firefox.webdriver):
 	text = None
 	while count and text == None:
 		try:
-			text = driver.find_element(By.CLASS_NAME, "elfjS").text
+			#text = driver.find_element(By.CLASS_NAME, "elfjS").text
+			element = driver.find_element(By.XPATH, "//div[contains(text(), 'Topics')]")
+			element.click()
+			text = element.text
+
 		except NoSuchElementException:
 			time.sleep(1)
 			count -= 1
+
+
+	time.sleep(3)
 	if not count:
 		logger.warning(f"Don't have content")
 	return count # если осталось время задержки
@@ -49,13 +56,13 @@ class PageLoader:
 
 	def try_dowload_task_page(self, task:Task) -> bool:
 		logger.info(f'Downloading task from "{task.url}"')
-		if self.cache.is_cached(task.name):
+		if self.cache.is_cached(task.cache_name_html):
 			logger.info('Already in cache, skipping.')
 			return False
 		else:
 			page = self.download_book_selenium(task)
 			if page:
-				self.cache.save(task.name, page)
+				self.cache.save(task.cache_name_html, page)
 				return True
 			else:
 				return False
