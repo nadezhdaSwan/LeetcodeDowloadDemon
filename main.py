@@ -5,6 +5,7 @@ from tasks_loader import TaskLoader
 from cache_manager import CacheManager
 from page_loader import PageLoader
 from html_parser import DetailsParser
+from create_result import Writer
 
 #logger settings
 logging.basicConfig(filename='leetcode.log', level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -20,6 +21,7 @@ min_delay = 1
 max_delay = 1
 
 if __name__=='__main__':
+	print('Запущено!')
 	logger.info(f"Start load tasks from dir: '{code_dir}'")
 	tasks_loader = TaskLoader()
 	tasks = tasks_loader.load_from_dir(code_dir)
@@ -38,6 +40,7 @@ if __name__=='__main__':
 	ready_tasks = details_parser.parse(tasks)
 	logger.info(f'Tasks ready to export: {len(ready_tasks)}.')
 
-
-
-
+	writer = Writer(ready_tasks, cache_description, cache_result)
+	writer.save_result()
+	logger.info('Tasks saved to "%s"' % result_dir)
+#~/code/LeetcodeDowloadDemon/leetcode_crontab.sh
