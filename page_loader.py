@@ -7,6 +7,8 @@ from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver import FirefoxOptions
+
 
 import logging
 logger = logging.getLogger(__name__)
@@ -69,7 +71,9 @@ class PageLoader:
 
 	def download_book_selenium(self, task:Task):
 		logger.info(f'Start direct download page from "{task.url}"')
-		driver = webdriver.Firefox()
+		opts = FirefoxOptions()
+		opts.add_argument("--headless") # don't launch firefox window
+		driver = webdriver.Firefox(options=opts)
 		driver.get(task.url)
 		content = False
 		if assert_page_content(driver):

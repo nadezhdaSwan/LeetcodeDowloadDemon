@@ -21,7 +21,6 @@ min_delay = 1
 max_delay = 1
 
 if __name__=='__main__':
-	print('Запущено!')
 	logger.info(f"Start load tasks from dir: '{code_dir}'")
 	tasks_loader = TaskLoader()
 	tasks = tasks_loader.load_from_dir(code_dir)

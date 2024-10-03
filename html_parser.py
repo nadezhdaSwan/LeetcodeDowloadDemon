@@ -1,6 +1,6 @@
 from cache_manager import CacheManager
 from task import Task
-from lxml import html
+from lxml import html,etree
 
 import logging
 logger = logging.getLogger(__name__)
@@ -13,7 +13,7 @@ class DetailsParser:
 
 	def parse(self, tasks: list[Task]):
 		ready_tasks = []
-		for task in tasks:
+		for task in tasks:		
 			if self.cache_description.is_cached(task.result_name_md) and self.cache_description.is_cached(task.result_name_md):
 				logger.info(f"Result files for '{task.name}' already done")
 			else:
@@ -29,7 +29,7 @@ def make_html_from_string(content: str):
 	return html.fromstring(content)
 
 def try_extract_description(task_html: html.HtmlElement):
-	description = task_html.xpath('//div[@class="elfjS"]')[0].text_content()
+	description = etree.tostring(task_html.xpath('//div[@class="elfjS"]')[0], pretty_print=True)
 	return description
 
 def try_extract_tags(task_html: html.HtmlElement):
