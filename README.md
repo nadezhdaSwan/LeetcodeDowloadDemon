@@ -1,1 +1,1 @@
-Daemon python plugin to download task conditions from leetcode
+Demon python plugin to download task conditions from leetcode
